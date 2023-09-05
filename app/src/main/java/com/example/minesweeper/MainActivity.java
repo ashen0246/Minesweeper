@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayout;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -35,12 +36,14 @@ public class MainActivity extends AppCompatActivity {
     //-1 bomb
     private int[][] field = new int[ROW_COUNT][COLUMN_COUNT];
     //used to check if game won at end
+    //NEED TO IMPLEMENT
     private int squaresDiscovered = 0;
 
     //to help with bfs
     //bc u cant put int[] inside and pair compares by reference use hashing strat
     //value = r*prime + c
     private Set<Integer> visited = new HashSet<Integer>();
+    private Set<Integer> flagged = new HashSet<Integer>();
 
 
     @Override
@@ -110,35 +113,60 @@ public class MainActivity extends AppCompatActivity {
         int i = n[0];
         int j = n[1];
 
-        if(breakMode){
-            if (field[i][j] != -1){
-                tv.setBackgroundColor(Color.LTGRAY);
-                tv.setTextColor(Color.GRAY);
+        if (!visited.contains(i*PRIME+j)) {
+            if (breakMode && !flagged.contains(i*PRIME+j)) {
+                visited.add(i*13 + j);
+                if (field[i][j] != -1) {
+                    tv.setBackgroundColor(Color.LTGRAY);
+                    tv.setTextColor(Color.GRAY);
 
-                if (field[i][j] == 0){
-                    //if empty square bfs to break all squares adjacent BFS
-                    // set cells around bomb
-                    if (i >= 1)                                 {bfsChecker(i-1, j);}
-                    if (i >= 1 && j < COLUMN_COUNT-1)           {bfsChecker(i-1, j+1);}
-                    if (i >= 1 && j >= 1)                       {bfsChecker(i-1, j-1);}
+                    if (field[i][j] == 0) {
+                        //if empty square bfs to break all squares adjacent BFS
+                        // set cells around bomb
+                        if (i >= 1) {
+                            bfsChecker(i - 1, j);
+                        }
+                        if (i >= 1 && j < COLUMN_COUNT - 1) {
+                            bfsChecker(i - 1, j + 1);
+                        }
+                        if (i >= 1 && j >= 1) {
+                            bfsChecker(i - 1, j - 1);
+                        }
 
-                    if (j >= 1)                                 {bfsChecker(i, j-1);}
-                    if (j < COLUMN_COUNT-1)                     {bfsChecker(i, j+1);}
+                        if (j >= 1) {
+                            bfsChecker(i, j - 1);
+                        }
+                        if (j < COLUMN_COUNT - 1) {
+                            bfsChecker(i, j + 1);
+                        }
 
-                    if (i < ROW_COUNT-1)                        {bfsChecker(i+1, j);}
-                    if (i < ROW_COUNT-1 && j >= 1)              {bfsChecker(i+1, j-1);}
-                    if (i < ROW_COUNT-1 && j < COLUMN_COUNT-1)  {bfsChecker(i+1, j+1);}
+                        if (i < ROW_COUNT - 1) {
+                            bfsChecker(i + 1, j);
+                        }
+                        if (i < ROW_COUNT - 1 && j >= 1) {
+                            bfsChecker(i + 1, j - 1);
+                        }
+                        if (i < ROW_COUNT - 1 && j < COLUMN_COUNT - 1) {
+                            bfsChecker(i + 1, j + 1);
+                        }
+                    }
+                }
+                //game over bomb broken
+                else {
+
+                }
+
+            }
+            //flag placing mode
+            else if (!breakMode){
+                if (!flagged.contains(i * PRIME + j)) {
+                    flagged.add(i * PRIME + j);
+                    tv.setBackgroundColor(Color.DKGRAY);
+                } else {
+                    flagged.remove(i * PRIME + j);
+                    tv.setBackgroundColor(Color.GREEN);
                 }
             }
-            //game over bomb broken
-            else{
-
-            }
-
-        }
-        //flag placing mode
-        else{
-
         }
 
     }
@@ -146,13 +174,21 @@ public class MainActivity extends AppCompatActivity {
     //helps get rid of repetitive code for bfs portion
     public void bfsChecker(int i, int j){
         if (!visited.contains(i*13 + j)){
-            visited.add(i*13 + j);
             onClickTV(cell_tvs[i][j]);
         }
     }
 
     public void onClickToggle(View view) {
         breakMode = !breakMode;
+        Button button = findViewById(R.id.toggle);
+
+        if (breakMode) {
+            button.setBackgroundColor(Color.LTGRAY);
+            button.setTextColor(Color.DKGRAY);
+        } else {
+            button.setBackgroundColor(Color.DKGRAY);
+            button.setTextColor(Color.LTGRAY);
+        }
     }
 
 
