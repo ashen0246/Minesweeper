@@ -10,16 +10,19 @@ import android.view.View;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
 
     // save the TextViews of all cells in an array, so later on,
     // when a TextView is clicked, we know which cell it is
-    private ArrayList<TextView> cell_tvs;
+    private TextView[][] cell_tvs = new TextView[ROW_COUNT][COLUMN_COUNT];
 
     private static final int ROW_COUNT = 12;
+    private static final int PRIME = 13;
     private static final int COLUMN_COUNT = 10;
     private static final int NUM_BOMBS = 4;
     private static final int squaresNeeded = ROW_COUNT * COLUMN_COUNT - NUM_BOMBS;
@@ -34,6 +37,12 @@ public class MainActivity extends AppCompatActivity {
     //used to check if game won at end
     private int squaresDiscovered = 0;
 
+    //to help with bfs
+    //bc u cant put int[] inside and pair compares by reference use hashing strat
+    //value = r*prime + c
+    private Set<Integer> visited = new HashSet<Integer>();
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -41,8 +50,6 @@ public class MainActivity extends AppCompatActivity {
 
         //No rotation of screen
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
-
-        cell_tvs = new ArrayList<TextView>();
 
         //set up random bombs
         //works
@@ -78,10 +85,12 @@ public class MainActivity extends AppCompatActivity {
                 tv.setWidth( dpToPixel(32) );
                 tv.setTextSize(24);
                 tv.setTextAlignment(TextView.TEXT_ALIGNMENT_CENTER);
-                tv.setTextColor(Color.GRAY);
+                tv.setTextColor(Color.GREEN);
                 tv.setBackgroundColor(Color.GREEN);
                 tv.setOnClickListener(this::onClickTV);
-                tv.setText(String.valueOf(field[i][j]));
+                if (field[i][j] != 0) {
+                    tv.setText(String.valueOf(field[i][j]));
+                }
 
                 GridLayout.LayoutParams lp = new GridLayout.LayoutParams();
                 lp.setMargins(dpToPixel(2), dpToPixel(2), dpToPixel(2), dpToPixel(2));
@@ -90,31 +99,71 @@ public class MainActivity extends AppCompatActivity {
 
                 grid.addView(tv, lp);
 
-                cell_tvs.add(tv);
+                cell_tvs[i][j] = tv;
             }
         }
     }
 
     public void onClickTV(View view){
         TextView tv = (TextView) view;
-        int n = findIndexOfCellTextView(tv);
-        int i = n/COLUMN_COUNT;
-        int j = n%COLUMN_COUNT;
+        int[] n = findIndexOfCellTextView(tv);
+        int i = n[0];
+        int j = n[1];
 
-        tv.setBackgroundColor(Color.LTGRAY);
-        tv.setTextColor(Color.GRAY);
+        if(breakMode){
+            if (field[i][j] != -1){
+                tv.setBackgroundColor(Color.LTGRAY);
+                tv.setTextColor(Color.GRAY);
+
+                if (field[i][j] == 0){
+                    //if empty square bfs to break all squares adjacent BFS
+                    // set cells around bomb
+                    if (i >= 1)                                 {bfsChecker(i-1, j);}
+                    if (i >= 1 && j < COLUMN_COUNT-1)           {bfsChecker(i-1, j+1);}
+                    if (i >= 1 && j >= 1)                       {bfsChecker(i-1, j-1);}
+
+                    if (j >= 1)                                 {bfsChecker(i, j-1);}
+                    if (j < COLUMN_COUNT-1)                     {bfsChecker(i, j+1);}
+
+                    if (i < ROW_COUNT-1)                        {bfsChecker(i+1, j);}
+                    if (i < ROW_COUNT-1 && j >= 1)              {bfsChecker(i+1, j-1);}
+                    if (i < ROW_COUNT-1 && j < COLUMN_COUNT-1)  {bfsChecker(i+1, j+1);}
+                }
+            }
+            //game over bomb broken
+            else{
+
+            }
+
+        }
+        //flag placing mode
+        else{
+
+        }
+
+    }
+
+    //helps get rid of repetitive code for bfs portion
+    public void bfsChecker(int i, int j){
+        if (!visited.contains(i*13 + j)){
+            visited.add(i*13 + j);
+            onClickTV(cell_tvs[i][j]);
+        }
     }
 
     public void onClickToggle(View view){
         //Implement
     }
 
-    private int findIndexOfCellTextView(TextView tv) {
-        for (int n=0; n<cell_tvs.size(); n++) {
-            if (cell_tvs.get(n) == tv)
-                return n;
+    private int[] findIndexOfCellTextView(TextView tv) {
+        for (int i = 0; i < ROW_COUNT; i++){
+            for (int j = 0; j < COLUMN_COUNT; j++){
+                if (cell_tvs[i][j] == tv){
+                    return new int[] {i, j};
+                }
+            }
         }
-        return -1;
+        return new int[] {-1, -1};
     }
 
     private int dpToPixel(int dp) {
