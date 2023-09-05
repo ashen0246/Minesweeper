@@ -105,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
                 cell_tvs[i][j] = tv;
             }
         }
+        updateFlagCount();
     }
 
     public void onClickTV(View view){
@@ -159,12 +160,18 @@ public class MainActivity extends AppCompatActivity {
             }
             //flag placing mode
             else if (!breakMode){
-                if (!flagged.contains(i * PRIME + j)) {
+                if (!flagged.contains(i*PRIME+j) && flagsLeft>0) {
                     flagged.add(i * PRIME + j);
                     tv.setBackgroundColor(Color.DKGRAY);
-                } else {
+                    flagsLeft --;
+                    TextView flagCount = findViewById(R.id.flagCount);
+                    flagCount.setText("Flags Left: " + String.valueOf(flagsLeft));
+                } else if (flagged.contains(i*PRIME+j)){
                     flagged.remove(i * PRIME + j);
                     tv.setBackgroundColor(Color.GREEN);
+                    flagsLeft ++;
+                    TextView flagCount = findViewById(R.id.flagCount);
+                    flagCount.setText("Flags Left: " + String.valueOf(flagsLeft));
                 }
             }
         }
@@ -185,9 +192,11 @@ public class MainActivity extends AppCompatActivity {
         if (breakMode) {
             button.setBackgroundColor(Color.LTGRAY);
             button.setTextColor(Color.DKGRAY);
+            button.setText("Breaking");
         } else {
             button.setBackgroundColor(Color.DKGRAY);
             button.setTextColor(Color.LTGRAY);
+            button.setText("Flagging");
         }
     }
 
@@ -201,6 +210,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return new int[] {-1, -1};
+    }
+
+    private void updateFlagCount(){
+        TextView flagCount = findViewById(R.id.flagCount);
+        flagCount.setText("Flags Left: " + String.valueOf(flagsLeft));
     }
 
     private int dpToPixel(int dp) {

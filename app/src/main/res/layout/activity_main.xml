@@ -9,8 +9,8 @@
 
     <TextView
         android:id="@+id/flagCount"
-        android:layout_width="7dp"
-        android:layout_height="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="84dp"
 
         android:text="0"
@@ -52,7 +52,7 @@
         android:layout_marginTop="100dp"
         android:layout_marginBottom="10dp"
         android:onClick="onClickToggle"
-        android:text="Toggle"
+        android:text="Breaking"
         app:layout_constraintBottom_toBottomOf="@id/field"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
