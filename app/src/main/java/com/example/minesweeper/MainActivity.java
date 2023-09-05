@@ -151,9 +151,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void onClickToggle(View view){
-        //Implement
+    public void onClickToggle(View view) {
+        breakMode = !breakMode;
     }
+
 
     private int[] findIndexOfCellTextView(TextView tv) {
         for (int i = 0; i < ROW_COUNT; i++){
