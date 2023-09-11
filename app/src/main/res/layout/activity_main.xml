@@ -11,36 +11,34 @@
         android:id="@+id/flagCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="84dp"
 
-        android:text="0"
+        android:text="@string/defaultFlagCounter"
         app:layout_constraintBottom_toTopOf="@id/field"
-        app:layout_constraintStart_toStartOf="@id/field"
-        app:layout_constraintTop_toBottomOf="@id/field"
-        app:layout_constraintVertical_bias="0.5" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.2" />
 
     <TextView
         android:id="@+id/timer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="0"
+
+        android:text="@string/defaultTimer"
         app:layout_constraintBottom_toTopOf="@id/field"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.622"
-        app:layout_constraintStart_toEndOf="@id/flagCount"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5" />
+        app:layout_constraintVertical_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.8" />
 
     <android.support.v7.widget.GridLayout
         android:id="@+id/field"
-        android:layout_width="360dp"
-        android:layout_height="470dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="32dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/flagCount"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -49,15 +47,13 @@
         android:id="@+id/toggle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
-        android:layout_marginBottom="10dp"
         android:onClick="onClickToggle"
-        android:text="Breaking"
-        app:layout_constraintBottom_toBottomOf="@id/field"
+        android:text="@string/breaking"
+        app:layout_constraintTop_toBottomOf="@id/field"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/field"
         app:layout_constraintVertical_bias="0.5" />
 
 </android.support.constraint.ConstraintLayout>

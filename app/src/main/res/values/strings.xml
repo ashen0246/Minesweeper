@@ -1,4 +1,14 @@
 <resources>
     <string name="app_name">CS 310 Andy Shen</string>
 
+    <string name="defaultFlagCounter">0</string>
+    <string name="defaultTimer">0</string>
+
+    <string name="breaking">breaking</string>
+    <string name="flagging">flagging</string>
+
+    <string name="won1">You won!</string>
+    <string name="won2">Good job!</string>
+
+    <string name="playAgain">Play Again</string>
 </resources>
