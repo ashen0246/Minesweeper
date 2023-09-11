@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".GameOverActivity">
+
+    <TextView
+        android:id="@+id/wonMessage1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="84dp"
+
+        android:text="You Won!"
+        app:layout_constraintBottom_toTopOf="parent"
+        />
+
+
+
+    <TextView
+        android:id="@+id/wonMessage2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="84dp"
+
+        android:text="Good Job!"
+        app:layout_constraintBottom_toTopOf="@id/wonMessage1"
+        />
+
+
+    <Button
+        android:id="@+id/playAgain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:layout_marginBottom="10dp"
+        android:onClick="onClickPlayAgain"
+        android:text="Play Again"
+        app:layout_constraintBottom_toTopOf="@id/wonMessage2"
+        />
+
+</android.support.constraint.ConstraintLayout>

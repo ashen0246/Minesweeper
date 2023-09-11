@@ -1,5 +1,6 @@
 package com.example.minesweeper;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -10,7 +11,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -22,8 +22,8 @@ public class MainActivity extends AppCompatActivity {
     // when a TextView is clicked, we know which cell it is
     private TextView[][] cell_tvs = new TextView[ROW_COUNT][COLUMN_COUNT];
 
-    private static final int ROW_COUNT = 12;
     private static final int PRIME = 13;
+    private static final int ROW_COUNT = 12;
     private static final int COLUMN_COUNT = 10;
     private static final int NUM_BOMBS = 4;
     private static final int squaresNeeded = ROW_COUNT * COLUMN_COUNT - NUM_BOMBS;
@@ -36,8 +36,6 @@ public class MainActivity extends AppCompatActivity {
     //-1 bomb
     private int[][] field = new int[ROW_COUNT][COLUMN_COUNT];
     //used to check if game won at end
-    //NEED TO IMPLEMENT
-    private int squaresDiscovered = 0;
 
     //to help with bfs
     //bc u cant put int[] inside and pair compares by reference use hashing strat
@@ -60,20 +58,20 @@ public class MainActivity extends AppCompatActivity {
             Random rand = new Random();
             int r = rand.nextInt(ROW_COUNT);
             int c = rand.nextInt(COLUMN_COUNT);
-            if (field[r][c] == 0){
+            if (field[r][c] != -1){
                 field[r][c] = -1;
 
                 // set cells around bomb
-                if (r >= 1)                                 {field[r-1][c] += 1;}
-                if (r >= 1 && c < COLUMN_COUNT-1)           {field[r-1][c+1] += 1;}
-                if (r >= 1 && c >= 1)                       {field[r-1][c-1] += 1;}
+                if (r >= 1 && field[r-1][c] != -1)                                   {field[r-1][c] += 1;}
+                if (r >= 1 && c < COLUMN_COUNT-1 && field[r-1][c+1] != -1)           {field[r-1][c+1] += 1;}
+                if (r >= 1 && c >= 1 && field[r-1][c-1] != -1)                       {field[r-1][c-1] += 1;}
 
-                if (c >= 1)                                 {field[r][c-1] += 1;}
-                if (c < COLUMN_COUNT-1)                     {field[r][c+1] += 1;}
+                if (c >= 1 && field[r][c-1] != -1)                                   {field[r][c-1] += 1;}
+                if (c < COLUMN_COUNT-1 && field[r][c+1] != -1)                       {field[r][c+1] += 1;}
 
-                if (r < ROW_COUNT - 1)                      {field[r+1][c] += 1;}
-                if (r < ROW_COUNT-1 && c >= 1)              {field[r+1][c-1] += 1;}
-                if (r < ROW_COUNT-1 && c < COLUMN_COUNT-1)  {field[r+1][c+1] += 1;}
+                if (r < ROW_COUNT - 1 && field[r+1][c] != -1)                        {field[r+1][c] += 1;}
+                if (r < ROW_COUNT-1 && c >= 1 && field[r+1][c-1] != -1)              {field[r+1][c-1] += 1;}
+                if (r < ROW_COUNT-1 && c < COLUMN_COUNT-1 && field[r+1][c+1] != -1)  {field[r+1][c+1] += 1;}
             }
             else{
                 i--;
@@ -114,10 +112,13 @@ public class MainActivity extends AppCompatActivity {
         int i = n[0];
         int j = n[1];
 
+        //if node is not already visited
         if (!visited.contains(i*PRIME+j)) {
+            //if we are on break mode and the node is not flagged
             if (breakMode && !flagged.contains(i*PRIME+j)) {
-                visited.add(i*13 + j);
+                //if it is not a bomb
                 if (field[i][j] != -1) {
+                    visited.add(i*13 + j);
                     tv.setBackgroundColor(Color.LTGRAY);
                     tv.setTextColor(Color.GRAY);
 
@@ -151,16 +152,19 @@ public class MainActivity extends AppCompatActivity {
                             bfsChecker(i + 1, j + 1);
                         }
                     }
+                    if (visited.size() == ROW_COUNT*COLUMN_COUNT-NUM_BOMBS){
+                        gameOver();
+                    }
                 }
                 //game over bomb broken
                 else {
-
+                    gameOver();
                 }
 
             }
             //flag placing mode
             else if (!breakMode){
-                if (!flagged.contains(i*PRIME+j) && flagsLeft>0) {
+                if (!flagged.contains(i*PRIME+j)) {
                     flagged.add(i * PRIME + j);
                     tv.setBackgroundColor(Color.DKGRAY);
                     flagsLeft --;
@@ -215,6 +219,19 @@ public class MainActivity extends AppCompatActivity {
     private void updateFlagCount(){
         TextView flagCount = findViewById(R.id.flagCount);
         flagCount.setText("Flags Left: " + String.valueOf(flagsLeft));
+    }
+
+    private void gameOver(){
+        // game is won if visited is correct size
+        Intent gameOverIntent = new Intent(this, GameOverActivity.class);
+        if (visited.size() == ROW_COUNT*COLUMN_COUNT - NUM_BOMBS){
+            gameOverIntent.putExtra("won", true);
+        }
+        // if bomb clicked, visited will be too small
+        else{
+            gameOverIntent.putExtra("won", false);
+        }
+        startActivity(gameOverIntent);
     }
 
     private int dpToPixel(int dp) {
