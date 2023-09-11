@@ -39,12 +39,12 @@ public class MainActivity extends AppCompatActivity {
     //used to check if game won at end
 
     //to help with bfs
-    //bc u cant put int[] inside and pair compares by reference use hashing strat
+    //bc u cant put int[] inside and pair compares by reference use hashing strategy
     //value = r*prime + c
-    private Set<Integer> visited = new HashSet<Integer>();
-    private Set<Integer> flagged = new HashSet<Integer>();
+    private Set<Integer> visited = new HashSet<>();
+    private Set<Integer> flagged = new HashSet<>();
     //to help with animation at the end
-    private Set<Integer> bombs = new HashSet<Integer>();
+    private Set<Integer> bombs = new HashSet<>();
 
     private int clock = 0;
     private boolean gameOver = false;
@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
                             bfsChecker(i + 1, j + 1);
                         }
                     }
-                    if (visited.size() == ROW_COUNT*COLUMN_COUNT-NUM_BOMBS){
+                    if (visited.size() == squaresNeeded){
                         gameOver();
                     }
                 }
@@ -233,7 +233,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateFlagCount(){
         TextView flagCount = findViewById(R.id.flagCount);
-        flagCount.setText(" " + String.valueOf(flagsLeft));
+        flagCount.setText(" " + flagsLeft);
     }
 
     private void gameOver() {
@@ -253,7 +253,7 @@ public class MainActivity extends AppCompatActivity {
     private void changeScreens(){
         // game is won if visited is correct size
         Intent gameOverIntent = new Intent(this, GameOverActivity.class);
-        if (visited.size() == ROW_COUNT*COLUMN_COUNT - NUM_BOMBS){
+        if (visited.size() == squaresNeeded){
             gameOverIntent.putExtra("won", true);
         }
         // if bomb clicked, visited will be too small
@@ -276,7 +276,7 @@ public class MainActivity extends AppCompatActivity {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                timeView.setText(" " + String.valueOf(clock));
+                timeView.setText(" " + clock);
                 if(!gameOver) {
                     clock++;
                 }
