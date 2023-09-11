@@ -1,16 +1,24 @@
 <resources>
     <string name="app_name">CS 310 Andy Shen</string>
 
-    <string name="defaultFlagCounter">0</string>
-    <string name="defaultTimer">0</string>
+    <string name="defaultFlagCounter"> 4</string>
+    <string name="defaultTimer"> 0</string>
 
-    <string name="breaking">breaking</string>
-    <string name="flagging">flagging</string>
+    <string name="breaking">\u26CF</string>
+    <string name="flagging">\uD83D\uDEA9</string>
 
     <string name="won1">You won!</string>
     <string name="won2">Good job!</string>
     <string name="lost1">You lost.</string>
     <string name="lost2">Try again!</string>
 
+    <string name="timeUsage">Used 0 Seconds.</string>
+
     <string name="playAgain">Play Again</string>
+
+    <string name="clock">\uD83D\uDD53</string>
+    <string name="flag">\uD83D\uDEA9</string>
+    <string name="mine">\uD83D\uDCA3</string>
+    <string name="pick">\u26CF</string>
+
 </resources>

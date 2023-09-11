@@ -31,6 +31,10 @@ public class GameOverActivity extends AppCompatActivity {
             wonMessage2.setText(getString(R.string.lost2));
         }
 
+        int timeUsage = getIntent().getIntExtra("timeUsage", 0);
+        TextView timeText = findViewById(R.id.timeUsage);
+        timeText.setText("Used " + timeUsage + " Seconds.");
+
     }
 
     public void onClickPlayAgain(View view) {

@@ -5,6 +5,7 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayout;
 import android.view.View;
@@ -42,6 +43,11 @@ public class MainActivity extends AppCompatActivity {
     //value = r*prime + c
     private Set<Integer> visited = new HashSet<Integer>();
     private Set<Integer> flagged = new HashSet<Integer>();
+    //to help with animation at the end
+    private Set<Integer> bombs = new HashSet<Integer>();
+
+    private int clock = 0;
+    private boolean gameOver = false;
 
 
     @Override
@@ -60,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
             int c = rand.nextInt(COLUMN_COUNT);
             if (field[r][c] != -1){
                 field[r][c] = -1;
-
+                bombs.add(r*PRIME+c);
                 // set cells around bomb
                 if (r >= 1 && field[r-1][c] != -1)                                   {field[r-1][c] += 1;}
                 if (r >= 1 && c < COLUMN_COUNT-1 && field[r-1][c+1] != -1)           {field[r-1][c+1] += 1;}
@@ -104,9 +110,14 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         updateFlagCount();
+
+        runTimer();
     }
 
     public void onClickTV(View view){
+        if (gameOver){
+            changeScreens();
+        }
         TextView tv = (TextView) view;
         int[] n = findIndexOfCellTextView(tv);
         int i = n[0];
@@ -158,6 +169,10 @@ public class MainActivity extends AppCompatActivity {
                 }
                 //game over bomb broken
                 else {
+                    tv.setText(getString(R.string.mine));
+
+                    //so game over doesn't do this twice
+                    bombs.remove(i*PRIME+j);
                     gameOver();
                 }
 
@@ -166,16 +181,16 @@ public class MainActivity extends AppCompatActivity {
             else if (!breakMode){
                 if (!flagged.contains(i*PRIME+j)) {
                     flagged.add(i * PRIME + j);
-                    tv.setBackgroundColor(Color.DKGRAY);
+                    tv.setText(getString(R.string.flag));
+                    tv.setTextColor(Color.BLACK);
                     flagsLeft --;
-                    TextView flagCount = findViewById(R.id.flagCount);
-                    flagCount.setText("Flags Left: " + String.valueOf(flagsLeft));
+                    updateFlagCount();
                 } else if (flagged.contains(i*PRIME+j)){
                     flagged.remove(i * PRIME + j);
-                    tv.setBackgroundColor(Color.GREEN);
+                    tv.setText(String.valueOf(field[i][j]));
+                    tv.setTextColor(Color.GREEN);
                     flagsLeft ++;
-                    TextView flagCount = findViewById(R.id.flagCount);
-                    flagCount.setText("Flags Left: " + String.valueOf(flagsLeft));
+                    updateFlagCount();
                 }
             }
         }
@@ -196,11 +211,11 @@ public class MainActivity extends AppCompatActivity {
         if (breakMode) {
             button.setBackgroundColor(Color.LTGRAY);
             button.setTextColor(Color.DKGRAY);
-            button.setText("Breaking");
+            button.setText(getString(R.string.breaking));
         } else {
-            button.setBackgroundColor(Color.DKGRAY);
-            button.setTextColor(Color.LTGRAY);
-            button.setText("Flagging");
+            button.setBackgroundColor(Color.LTGRAY);
+            button.setTextColor(Color.DKGRAY);
+            button.setText(getString(R.string.flagging));
         }
     }
 
@@ -218,10 +233,24 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateFlagCount(){
         TextView flagCount = findViewById(R.id.flagCount);
-        flagCount.setText("Flags Left: " + String.valueOf(flagsLeft));
+        flagCount.setText(" " + String.valueOf(flagsLeft));
     }
 
-    private void gameOver(){
+    private void gameOver() {
+        //first display all bombs
+        gameOver = true;
+
+        final Handler handler = new Handler();
+        // Delay the for loop by 1 second.
+        handler.postDelayed(() -> {
+            for (int x : bombs) {
+                TextView tv = cell_tvs[x / PRIME][x % PRIME];
+                tv.setText(getString(R.string.mine));
+            }
+        }, 1000);
+    }
+
+    private void changeScreens(){
         // game is won if visited is correct size
         Intent gameOverIntent = new Intent(this, GameOverActivity.class);
         if (visited.size() == ROW_COUNT*COLUMN_COUNT - NUM_BOMBS){
@@ -231,11 +260,28 @@ public class MainActivity extends AppCompatActivity {
         else{
             gameOverIntent.putExtra("won", false);
         }
+        gameOverIntent.putExtra("timeUsage", clock);
         startActivity(gameOverIntent);
     }
 
     private int dpToPixel(int dp) {
         float density = Resources.getSystem().getDisplayMetrics().density;
         return Math.round(dp * density);
+    }
+
+    private void runTimer() {
+        final TextView timeView = (TextView) findViewById(R.id.timer);
+        final Handler handler = new Handler();
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                timeView.setText(" " + String.valueOf(clock));
+                if(!gameOver) {
+                    clock++;
+                }
+                handler.postDelayed(this, 1000);
+            }
+        });
     }
 }
