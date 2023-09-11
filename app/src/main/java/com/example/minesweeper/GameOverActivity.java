@@ -25,10 +25,10 @@ public class GameOverActivity extends AppCompatActivity {
         boolean won = getIntent().getBooleanExtra("won", false);
         if (!won){
             TextView wonMessage1 = findViewById(R.id.wonMessage1);
-            wonMessage1.setText("You Lost.");
+            wonMessage1.setText(getString(R.string.lost1));
 
             TextView wonMessage2 = findViewById(R.id.wonMessage2);
-            wonMessage2.setText("Better Luck next time!");
+            wonMessage2.setText(getString(R.string.lost2));
         }
 
     }

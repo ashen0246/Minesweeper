@@ -9,6 +9,8 @@
 
     <string name="won1">You won!</string>
     <string name="won2">Good job!</string>
+    <string name="lost1">You lost.</string>
+    <string name="lost2">Try again!</string>
 
     <string name="playAgain">Play Again</string>
 </resources>
