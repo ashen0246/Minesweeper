@@ -187,7 +187,12 @@ public class MainActivity extends AppCompatActivity {
                     updateFlagCount();
                 } else if (flagged.contains(i*PRIME+j)){
                     flagged.remove(i * PRIME + j);
-                    tv.setText(String.valueOf(field[i][j]));
+                    if (field[i][j] != 0) {
+                        tv.setText(String.valueOf(field[i][j]));
+                    }
+                    else{
+                        tv.setText("");
+                    }
                     tv.setTextColor(Color.GREEN);
                     flagsLeft ++;
                     updateFlagCount();
